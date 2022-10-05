@@ -10,4 +10,3 @@ module.exports = [
     price: 55.55
   }
 ];
-ß
