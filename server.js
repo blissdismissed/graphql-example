@@ -1,51 +1,32 @@
-const express = require('express');
-const { buildSchema } = require('graphql');
-const { graphqlHTTP } = require('express-graphql');
+const path = require('path');
+const express = require("express");
+const { graphqlHTTP } = require("express-graphql");
 
-const schema = buildSchema(`
-  type Query {
-    products: [Product]
-    orders: [Order]
-  }
+const { loadFilesSync } = require('@graphql-tools/load-files');
+const { makeExecutableSchema } = require("@graphql-tools/schema");
 
-  type Product {
-    id: ID!
-    description: String!
-    price: Float!
-    reviews: [Review]
-  }
+const typesArray = loadFilesSync(path.join(__dirname, '**/*.graphql'));
 
-  type Review {
-    rating: Int!
-    comment: String
-  }
-
-  type Order {
-    date: String!
-    subtotal: Float!
-    items: [OrderItem]
-
-  }
-
-  type OrderItem {
-    product: Product!
-    quantity: Int!
-  }
-`);
+const schema = makeExecutableSchema({
+  typeDefs: typesArray
+});
 
 const root = {
-  description: 'Red Shoe',
-  price: 42.12,
+  products: require('./products/products.model'),
+  orders: require('./orders/orders.model'),
 };
 
 const app = express();
 
-app.use('/graphql', graphqlHTTP({
-  schema: schema,
-  rootValue: root,
-  graphiql: true,
-}));
+app.use(
+  "/graphql",
+  graphqlHTTP({
+    schema: schema,
+    rootValue: root,
+    graphiql: true
+  })
+);
 
 app.listen(3000, () => {
-  console.log('Running GraphQL server... ');
+  console.log("Running GraphQL server... ");
 });
