@@ -8,11 +8,9 @@ const { loadFilesSync } = require('@graphql-tools/load-files');
 const { makeExecutableSchema } = require("@graphql-tools/schema");
 
 const typesArray = loadFilesSync('**/*', {
-  extensions: ['graphql','resolvers.js']
+  extensions: ['graphql']
 });
-const resolversArray = loadFilesSync('**/*', {
-  extensions: ['resolvers.js']
-});
+const resolversArray = loadFilesSync(path.join(__dirname, '**/*.resolvers.js'));
 
 
 const schema = makeExecutableSchema({
